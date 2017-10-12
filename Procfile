@@ -1,1 +1,1 @@
-web gunicorn app:snappass/main.py $PORT
+web gunicorn snappass/main.py:app $PORT
