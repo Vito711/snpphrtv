@@ -1,1 +1,1 @@
-web: python snappass/main.py -p ${PORT}
+web: python snappass/main.py $PORT
