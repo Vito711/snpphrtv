@@ -1,1 +1,1 @@
-web: gunicorn snappass/main.py $PORT
+web: flask snappass/main.py $PORT
