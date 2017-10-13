@@ -1,3 +1,3 @@
-Version 1.2.0
+Version v0.9.1
 -------------
-* Added Fernet cryptography to the stored keys, prevent access to full text passwords if someone has access to Redis
+* Removed Docker-related files.
