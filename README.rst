@@ -2,14 +2,10 @@
 SnapPass-Heroku
 ========
 
-|pypi| |build|
+|build|
 
-.. |pypi| image:: https://img.shields.io/pypi/v/snappass.svg
-    :target: https://pypi.python.org/pypi/snappass
-    :alt: Latest version released on PyPI
-
-.. |build| image:: https://travis-ci.org/pinterest/snappass.svg
-    :target: http://travis-ci.org/pinterest/snappass
+.. |build| image:: https://travis-ci.org/samteezy/snappass-heroku.svg
+    :target: http://travis-ci.org/samteezy/snappass-heroku
     :alt: Build status
 
 It's like SnapChat... for Passwords... (for Heroku).
