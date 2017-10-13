@@ -7,10 +7,12 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+services:
+  - docker
 install:
+  - pip install cibuildwheel==0.6.0
   - pip install tox-travis
 script:
-  - pip install cibuildwheel==0.6.0
   - cibuildwheel --output-dir wheelhouse
   - tox
 services:
