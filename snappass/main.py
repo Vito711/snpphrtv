@@ -12,7 +12,7 @@ from redis.exceptions import ConnectionError
 
 SNEAKY_USER_AGENTS = ('Slackbot', 'facebookexternalhit', 'Twitterbot',
                       'Facebot', 'WhatsApp', 'SkypeUriPreview',
-                      'Iframely')
+                      'Iframely', 'Google')
 SNEAKY_USER_AGENTS_RE = re.compile('|'.join(SNEAKY_USER_AGENTS))
 NO_SSL = os.environ.get('NO_SSL', False)
 TOKEN_SEPARATOR = '~'
