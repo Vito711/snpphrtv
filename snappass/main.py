@@ -160,10 +160,11 @@ def request_is_valid(request):
 def index():
     return render_template('set_password.html')
 
-"""Add in ability to render a clean error page"""
+"""Add in ability to render a clean error page
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+"""
 
 
 @app.route('/', methods=['POST'])
