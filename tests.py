@@ -1,3 +1,4 @@
+from mock import patch
 import time
 import unittest
 import uuid
@@ -5,6 +6,7 @@ from unittest import TestCase
 
 from cryptography.fernet import Fernet
 from werkzeug.exceptions import BadRequest
+from mockredis import mock_strict_redis_client
 
 # noinspection PyPep8Naming
 import snappass.main as snappass
@@ -14,19 +16,20 @@ __author__ = 'davedash'
 
 class SnapPassTestCase(TestCase):
 
+    @patch('redis.client.StrictRedis', mock_strict_redis_client)
     def test_get_password(self):
         password = "melatonin overdose 1337!$"
         key = snappass.set_password(password, 30)
         self.assertEqual(password, snappass.get_password(key))
         # Assert that we can't look this up a second time.
-        self.assertEqual(None, snappass.get_password(key))
+        self.assertIsNone(snappass.get_password(key))
 
     def test_password_is_not_stored_in_plaintext(self):
         password = "trustno1"
         token = snappass.set_password(password, 30)
         redis_key = token.split(snappass.TOKEN_SEPARATOR)[0]
         stored_password_text = snappass.redis_client.get(redis_key).decode('utf-8')
-        self.assertFalse(password in stored_password_text)
+        self.assertNotIn(password, stored_password_text)
 
     def test_returned_token_format(self):
         password = "trustsome1"
@@ -91,7 +94,10 @@ class SnapPassTestCase(TestCase):
         password = 'open sesame'
         key = snappass.set_password(password, 1)
         time.sleep(1.5)
-        self.assertEqual(None, snappass.get_password(key))
+        # Expire functionality must be explicitly invoked using do_expire(time).
+        # mockredis does not support automatic expiration at this time
+        snappass.redis_client.do_expire()
+        self.assertIsNone(snappass.get_password(key))
 
 
 class SnapPassRoutesTestCase(TestCase):
@@ -104,7 +110,7 @@ class SnapPassRoutesTestCase(TestCase):
         password = "I like novelty kitten statues!"
         key = snappass.set_password(password, 30)
         rv = self.app.get('/{0}'.format(key))
-        self.assertTrue(password in rv.get_data(as_text=True))
+        self.assertIn(password, rv.get_data(as_text=True))
 
     def test_bots_denial(self):
         """
@@ -125,7 +131,7 @@ class SnapPassRoutesTestCase(TestCase):
 
         for ua in a_few_sneaky_bots:
             rv = self.app.get('/{0}'.format(key), headers={ 'User-Agent': ua })
-            self.assertEqual(rv.status_code, 404)
+            self.assertEqual(404, rv.status_code)
 
 
 if __name__ == '__main__':
