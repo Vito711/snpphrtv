@@ -16,6 +16,8 @@ I'm not a programmer by trade, so I know there's some unnecessary code cleanup t
 
 See it in action and use it yourself at https://snappass.heroku.com.
 
+[test](http://google.com)
+
 Requirements
 ------------
 
