@@ -20,10 +20,11 @@ Requirements
 ------------
 
 * Redis: just add the Heroku Redis add-on to your app prior to deploying this code.
-* Python: you don't need to specify a version, this is compatible with 2.7+ and 3.6+. As of this writing Heroku defaults to 3.6.2.
+* Python: you don't need to specify a version, this is compatible with 2.7+ and 3.4+. As of this writing Heroku defaults to 3.6.2.
 
 Installation
 ------------
+
 
 1. Create app.
 2. Add Heroku Redis add-on. Make sure it populates a config variable for REDIS_URL.
