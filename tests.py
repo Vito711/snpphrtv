@@ -6,7 +6,7 @@ from unittest import TestCase
 
 from cryptography.fernet import Fernet
 from werkzeug.exceptions import BadRequest
-from mockredis import mock_strict_redis_client
+from fakeredis import FakeStrictRedis
 
 # noinspection PyPep8Naming
 import snappass.main as snappass
@@ -16,7 +16,7 @@ __author__ = 'davedash'
 
 class SnapPassTestCase(TestCase):
 
-    @patch('redis.client.StrictRedis', mock_strict_redis_client)
+    @patch('redis.client.StrictRedis', FakeStrictRedis)
     def test_get_password(self):
         password = "melatonin overdose 1337!$"
         key = snappass.set_password(password, 30)
@@ -94,9 +94,6 @@ class SnapPassTestCase(TestCase):
         password = 'open sesame'
         key = snappass.set_password(password, 1)
         time.sleep(1.5)
-        # Expire functionality must be explicitly invoked using do_expire(time).
-        # mockredis does not support automatic expiration at this time
-        snappass.redis_client.do_expire()
         self.assertIsNone(snappass.get_password(key))
 
 
@@ -106,33 +103,23 @@ class SnapPassRoutesTestCase(TestCase):
         snappass.app.config['TESTING'] = True
         self.app = snappass.app.test_client()
 
-    def test_show_password(self):
+    def test_preview_password(self):
         password = "I like novelty kitten statues!"
         key = snappass.set_password(password, 30)
         rv = self.app.get('/{0}'.format(key))
+        self.assertNotIn(password, rv.get_data(as_text=True))
+
+    def test_show_password(self):
+        password = "I like novelty kitten statues!"
+        key = snappass.set_password(password, 30)
+        rv = self.app.post('/{0}'.format(key))
         self.assertIn(password, rv.get_data(as_text=True))
 
-    def test_bots_denial(self):
-        """
-        Main known bots User-Agent should be denied access
-        """
-        password = "Bots can't access this"
-        key = snappass.set_password(password, 30)
-        a_few_sneaky_bots = [
-            "Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)",
-            "facebookexternalhit/1.1",
-            "Facebot/1.0",
-            "Twitterbot/1.0",
-            "_WhatsApp/2.12.81 (Windows NT 6.1; U; es-ES) Presto/2.9.181 Version/12.00",
-            "WhatsApp/2.16.6/i",
-            "SkypeUriPreview Preview/0.5",
-            "Iframely/0.8.5 (+http://iframely.com/;)",
-        ]
-
-        for ua in a_few_sneaky_bots:
-            rv = self.app.get('/{0}'.format(key), headers={'User-Agent': ua})
-            self.assertEqual(404, rv.status_code)
-
+    def test_url_prefix(self):
+        password = "I like novelty kitten statues!"
+        snappass.URL_PREFIX="/test/prefix"
+        rv = self.app.post('/', data={'password': password, 'ttl': 'hour'})
+        self.assertIn("localhost/test/prefix/", rv.get_data(as_text=True))
 
 if __name__ == '__main__':
     unittest.main()
