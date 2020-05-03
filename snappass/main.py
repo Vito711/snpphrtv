@@ -17,6 +17,7 @@ SNEAKY_USER_AGENTS = ('Slackbot', 'facebookexternalhit', 'Twitterbot',
                       'Iframely', 'Google')
 SNEAKY_USER_AGENTS_RE = re.compile('|'.join(SNEAKY_USER_AGENTS))
 NO_SSL = os.environ.get('NO_SSL', False)
+URL_PREFIX = os.environ.get('URL_PREFIX', None)
 TOKEN_SEPARATOR = '~'
 
 
@@ -29,10 +30,9 @@ app.config.update(
     dict(STATIC_URL=os.environ.get('STATIC_URL', 'static')))
 
 # Initialize Redis
-
 if os.environ.get('MOCK_REDIS'):
-    from mockredis import mock_strict_redis_client
-    redis_client = mock_strict_redis_client()
+    from fakeredis import FakeStrictRedis
+    redis_client = FakeStrictRedis()
 elif os.environ.get('REDIS_URL'):
     redis_client = redis.StrictRedis.from_url(os.environ.get('REDIS_URL'))
 else:
@@ -129,6 +129,11 @@ def get_password(token):
         return password.decode('utf-8')
 
 
+@check_redis_alive
+def password_exists(token):
+    storage_key, decryption_key = parse_token(token)
+    return redis_client.exists(storage_key)
+
 def empty(value):
     if not value:
         return True
@@ -178,14 +183,25 @@ def handle_password():
         base_url = request.url_root
     else:
         base_url = request.url_root.replace("http://", "https://")
+    if URL_PREFIX:
+        base_url = base_url + URL_PREFIX.strip("/") + "/"
     link = base_url + url_quote_plus(token)
     return render_template('confirm.html', password_link=link)
 
 
 @app.route('/<password_key>', methods=['GET'])
-def show_password(password_key):
+def preview_password(password_key):
+    password_key = url_unquote_plus(password_key)
     if not request_is_valid(request):
+            abort(404)
+    if not password_exists(password_key):
         abort(404)
+
+    return render_template('preview.html')
+
+
+@app.route('/<password_key>', methods=['POST'])
+def show_password(password_key):
     password_key = url_unquote_plus(password_key)
     password = get_password(password_key)
     if not password:
