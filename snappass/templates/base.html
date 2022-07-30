@@ -24,22 +24,11 @@
     <script src="{{ config.STATIC_URL }}/jquery/jquery-1.12.4.min.js"></script>
     <script src="{{ config.STATIC_URL }}/bootstrap/js/bootstrap.min.js"></script>
     {% block js %}{% endblock %}
-  </body>
-  <br />
-  <br />
-<br>
-<br>
- <div class="center">
-  <div class="text-center" "p-3="" mb-2="" bg-info="" text-white"="">Made with ❤ by <a href ="http://www.technevalue.com/"<strong>TechneValue GmbH</strong></a></div>
-    <div class="center">
-  <p class="text-center">© 2022 TechneValue Service Desk</p>
-      <!-- FORKED FROM SNAPPASS GITHUB REPO. MODIFIED BY VITO.P -->
-    </div>   
-  </div>
-<script src="https://unpkg.com/@authorizerdev/authorizer-js/lib/authorizer.min.js"></script>
+  
+  <script src="https://unpkg.com/@authorizerdev/authorizer-js/lib/authorizer.min.js"></script>
 <script type="text/javascript">
   const authorizerRef = new authorizerdev.Authorizer({
-    authorizerURL: `https://authtv.herokuapp.com/`,
+    authorizerURL: `https://authtv.herokuapp.com`,
     redirectURL: window.location.origin,
     clientID: 'c0ff96a6-f608-4ec3-ab39-dd737ff1cc51', // obtain your client id from authorizer dashboard
   })
@@ -67,4 +56,16 @@
   }
   onLoad()
 </script>
+  </body>
+  <br />
+  <br />
+<br>
+<br>
+ <div class="center">
+  <div class="text-center" "p-3="" mb-2="" bg-info="" text-white"="">Made with ❤ by <a href ="http://www.technevalue.com/"<strong>TechneValue GmbH</strong></a></div>
+    <div class="center">
+  <p class="text-center">© 2022 TechneValue Service Desk</p>
+      <!-- FORKED FROM SNAPPASS GITHUB REPO. MODIFIED BY VITO.P -->
+    </div>   
+  </div>
 </html>
