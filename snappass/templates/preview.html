@@ -18,7 +18,7 @@
 <script type="text/javascript">
   const authorizerRef = new authorizerdev.Authorizer({
     authorizerURL: `https://authtv.herokuapp.com`,
-    redirectURL: #;,
+    redirectURL: document.location.reload(false),
     clientID: 'c0ff96a6-f608-4ec3-ab39-dd737ff1cc51', // obtain your client id from authorizer dashboard
   })
   // use the button selector as per your application
@@ -32,7 +32,7 @@
   async function onLoad() {
     const res = await authorizerRef.authorize({
       response_type: 'code',
-      use_refresh_token: true,
+      use_refresh_token: false,
     })
     if (res && res.access_token) {
       // you can use user information here, eg:
