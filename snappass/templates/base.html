@@ -33,11 +33,13 @@
     clientID: 'c0ff96a6-f608-4ec3-ab39-dd737ff1cc51', // obtain your client id from authorizer dashboard
   })
   // use the button selector as per your application
+  /**
   const logoutBtn = document.getElementById('logout')
   logoutBtn.addEventListener('click', async function () {
     await authorizerRef.logout()
     window.location.href = '/'
   })
+  */
   async function onLoad() {
     const res = await authorizerRef.authorize({
       response_type: 'code',
